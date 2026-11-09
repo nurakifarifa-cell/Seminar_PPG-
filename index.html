@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Portfolio Seminar PPG | Nur Akifa Rifai, S.Sos.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --bg-beige: #faf7f2;
+    --card-beige: #ffffff;
+    --card-beige-solid: #f5f0e6;
+    --text-main: #2d2425;
+    --text-muted: #6b5b5c;
+    --mauve-primary: #8c5375;
+    --mauve-hover: #73415e;
+    --mauve-light: #fdf8fb;
+    --mauve-gradient: linear-gradient(135deg, #8c5375, #6a3c57);
+    --border-color: #eae1d1;
+    --white: #ffffff;
+    --shadow-sm: 0 4px 15px -3px rgba(140, 83, 117, 0.05);
+    --shadow-md: 0 12px 35px -5px rgba(140, 83, 117, 0.1);
+    --shadow-hover: 0 20px 40px -10px rgba(140, 83, 117, 0.2);
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --radius-md: 16px;
+    --radius-lg: 24px;
+  }
+
+  [data-theme="dark"] {
+    --bg-beige: #161415;
+    --card-beige: #201d1e;
+    --card-beige-solid: #2a2628;
+    --text-main: #f5f2ed;
+    --text-muted: #a89d9f;
+    --mauve-primary: #b07399;
+    --mauve-hover: #c488ad;
+    --mauve-light: #2a1f26;
+    --mauve-gradient: linear-gradient(135deg, #b07399, #c488ad);
+    --border-color: #383033;
+    --white: #201d1e;
+    --shadow-sm: 0 4px 15px -3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 12px 35px -5px rgba(0, 0, 0, 0.5);
+    --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+  body { background-color: var(--bg-beige); color: var(--text-main); min-height: 100vh; display: flex; transition: background-color 0.4s, color 0.4s; overflow-x: hidden; }
+  
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-beige); }
+  ::-webkit-scrollbar-thumb { background: var(--mauve-primary); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--mauve-hover); }
+
+  /* LOADER */
+  .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-beige); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease; }
+  .loader-book { font-size: 3.5rem; color: var(--mauve-primary); animation: float 2s infinite ease-in-out; margin-bottom: 1.5rem; filter: drop-shadow(0 10px 15px rgba(140, 83, 117, 0.3)); }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+  /* PROGRESS BAR */
+  .scroll-progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--mauve-gradient); width: 0%; z-index: 1001; transition: width 0.1s; box-shadow: 0 0 10px rgba(140,83,117,0.5); }
+
+  /* SIDEBAR NAVIGATION */
+  .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 300px; background-color: var(--card-beige); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; z-index: 1000; transform: translateX(-300px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: var(--shadow-md); }
+  .sidebar.visible { transform: translateX(0); }
+  .sidebar-header { padding: 2rem 1.5rem; display: flex; align-items: center; gap: 1.2rem; border-bottom: 1px solid var(--border-color); }
+  .brand-mark { width: 50px; height: 50px; background: var(--mauve-gradient); color: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; box-shadow: 0 8px 20px rgba(140, 83, 117, 0.3); }
+  .brand-text { display: flex; flex-direction: column; }
+  .brand-title { font-weight: 700; font-size: 1.15rem; color: var(--text-main); letter-spacing: 0.5px;}
+  .brand-sub { font-size: 0.8rem; color: var(--mauve-primary); font-weight: 500;}
+
+  .sidebar-nav { flex: 1; overflow-y: auto; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .nav-link { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; color: var(--text-muted); text-decoration: none; font-weight: 500; border-radius: 12px; transition: var(--transition); position: relative; overflow: hidden; }
+  .nav-link::before { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 4px; background: var(--mauve-primary); transform: scaleY(0); transition: transform 0.3s ease; border-radius: 4px; }
+  .nav-link i { font-size: 1.2rem; width: 24px; text-align: center; color: var(--text-muted); transition: var(--transition); }
+  .nav-link:hover { background-color: var(--mauve-light); color: var(--mauve-primary); transform: translateX(5px); }
+  .nav-link.active { background-color: var(--mauve-light); color: var(--mauve-primary); font-weight: 600; }
+  .nav-link.active::before { transform: scaleY(1); }
+
+  .sidebar-footer { padding: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+  .theme-toggle { background: var(--card-beige-solid); border: none; color: var(--text-muted); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); font-size: 1.1rem; }
+  .theme-toggle:hover { background: var(--mauve-primary); color: #fff; transform: rotate(15deg); }
+  .header-photo img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--mauve-primary); }
+
+  /* SIDEBAR TOGGLE BTN */
+  .sidebar-toggle-btn { position: fixed; top: 50%; left: 0; transform: translateY(-50%); width: 36px; height: 60px; background: var(--mauve-gradient); color: #fff; border: none; border-radius: 0 12px 12px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1002; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 4px 0 15px rgba(140,83,117,0.3); font-size: 1.2rem; }
+  .sidebar-toggle-btn:hover { width: 42px; background: var(--mauve-primary); }
+  body.sidebar-visible .sidebar-toggle-btn { left: 300px; }
+
+  /* MAIN WRAPPER */
+  .main-wrapper { margin-left: 0; flex: 1; display: flex; flex-direction: column; min-height: 100vh; transition: margin-left 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .content { flex: 1; padding: 3rem 2rem; max-width: 1200px; width: 100%; margin: 0 auto; }
+  .tab-section { display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; }
+  .tab-section.active { display: block; opacity: 1; transform: translateY(0); animation: slideUp 0.6s ease forwards; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CARDS */
+  .card { background-color: var(--card-beige); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem; position: relative; transition: var(--transition); }
+  .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+
+  /* HERO */
+  .hero-inner { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3rem; }
+  @media(min-width: 850px) { .hero-inner { flex-direction: row; text-align: left; justify-content: space-between; } }
+  .hero-text-wrap { flex: 1; }
+  .hero-icon-badge { width: 70px; height: 70px; background: var(--mauve-light); color: var(--mauve-primary); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; transform: rotate(-5deg); transition: var(--transition); }
+  .hero-title { font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem; line-height: 1.2; }
+  .hero-title span { color: var(--mauve-primary); }
+  .hero-divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; }
+  .divider-line { height: 2px; background: var(--border-color); flex: 1; border-radius: 2px; }
+  .divider-icon { color: var(--mauve-primary); font-size: 1.2rem; }
+  .hero-info-tag { display: inline-block; padding: 0.4rem 1rem; background: var(--mauve-light); color: var(--mauve-primary); border-radius: 50px; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; border: 1px solid rgba(140,83,117,0.2); }
+  .hero-photo { position: relative; }
+  .hero-photo::before { content: ''; position: absolute; inset: -15px; border-radius: 50%; border: 2px dashed var(--mauve-primary); animation: spin 20s linear infinite; }
+  .hero-photo img { width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 6px solid var(--card-beige); box-shadow: var(--shadow-md); position: relative; z-index: 2; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  /* HEADERS */
+  .section-header { margin-bottom: 3rem; text-align: center; }
+  .section-header h2 { font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.8rem; position: relative; display: inline-block; }
+  .section-header h2::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--mauve-primary); border-radius: 4px; }
+  .section-header p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+  /* PROFILE & TIMELINE */
+  .profile-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  @media(min-width: 992px) { .profile-grid { grid-template-columns: 350px 1fr; } }
+  .profile-sidebar-card { background: var(--card-beige-solid); padding: 2.5rem 2rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); }
+  .profile-sidebar-card img { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; margin-bottom: 1.5rem; border: 4px solid #fff; box-shadow: var(--shadow-sm); }
+  .info-group { margin-bottom: 1.2rem; text-align: left; background: var(--card-beige); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color); }
+  .info-group label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--mauve-primary); display: block; margin-bottom: 0.2rem; font-weight: 600;}
+  .info-group p { font-weight: 600; color: var(--text-main); font-size: 1rem; }
+  .quote-box { font-family: 'Caveat', cursive; font-size: 1.6rem; color: var(--mauve-primary); border-left: 4px solid var(--mauve-primary); padding: 1.5rem; background: var(--mauve-light); border-radius: 0 16px 16px 0; margin-bottom: 2rem; position: relative; line-height: 1.4; }
+  .edu-timeline { position: relative; padding-left: 2rem; margin-top: 1.5rem; }
+  .edu-timeline::before { content: ''; position: absolute; left: 7px; top: 10px; bottom: 10px; width: 2px; background: rgba(140, 83, 117, 0.3); }
+  .edu-item { position: relative; margin-bottom: 2rem; }
+  .edu-item::before { content: ''; position: absolute; left: -2rem; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--mauve-primary); border: 4px solid var(--card-beige); box-shadow: 0 0 0 2px rgba(140, 83, 117, 0.2); }
+  .edu-year { font-size: 0.9rem; color: var(--mauve-primary); font-weight: 700; background: var(--mauve-light); display: inline-block; padding: 0.2rem 0.8rem; border-radius: 20px; margin-bottom: 0.4rem;}
+  .edu-school { font-size: 1.1rem; font-weight: 600; color: var(--text-main); }
+
+  /* GRIDS & CARDS */
+  .grid-3 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+  @media(min-width: 768px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+  @media(min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+  .icon-card { background: var(--card-beige-solid); padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); transition: var(--transition); }
+
+  /* BUTTONS & UPLOADS */
+  .btn { background: var(--mauve-gradient); color: #fff; border: none; padding: 0.8rem 1.8rem; border-radius: 12px; font-weight: 600; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(140,83,117,0.3); }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(140,83,117,0.4); filter: brightness(1.1); }
+  .btn-outline { background: transparent; color: var(--mauve-primary); border: 2px solid var(--mauve-primary); box-shadow: none; }
+  .btn-outline:hover { background: var(--mauve-primary); color: #fff; }
+  .upload-box { border: 2px dashed rgba(140,83,117,0.4); padding: 2.5rem 2rem; text-align: center; border-radius: var(--radius-md); background: var(--mauve-light); cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; }
+  .upload-box:hover { border-color: var(--mauve-primary); background: rgba(140,83,117,0.05); }
+
+  /* 4C Reflection Layout */
+  .c4-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media(min-width: 768px) { .c4-grid { grid-template-columns: 1fr 1fr; } }
+  .c4-item { background: var(--card-beige); padding: 1.2rem; border-radius: 12px; border-left: 4px solid var(--mauve-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+  .c4-item strong { color: var(--mauve-primary); display: block; margin-bottom: 0.4rem; font-size: 0.9rem;}
+  .c4-item span { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; display: block;}
+
+  /* CUSTOM MODALS */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000; justify-content: center; align-items: center; padding: 1rem; }
+  .modal-overlay.active { display: flex; }
+  .modal-container { background: var(--card-beige); width: 100%; max-width: 900px; border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+  .modal-container.fullscreen { max-width: 100vw !important; height: 100vh !important; border-radius: 0 !important; }
+  .modal-header { padding: 1.2rem 2rem; background: var(--card-beige-solid); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); }
+  .modal-close { background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+  .modal-body { padding: 2rem; overflow-y: auto; max-height: 70vh; background: var(--bg-beige); display: flex; flex-direction: column; gap: 1rem; flex: 1; }
+  .modal-container.fullscreen .modal-body { max-height: none; }
+
+  /* SECTION NAV CARDS */
+  .section-nav-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+  @media(max-width: 768px) { .section-nav-cards { grid-template-columns: 1fr; } }
+  .sec-nav-card { background: var(--card-beige-solid); border: 2px solid var(--border-color); border-radius: var(--radius-md); padding: 1.8rem 1.5rem; text-align: center; cursor: pointer; transition: var(--transition); }
+  .sec-nav-card:hover, .sec-nav-card.active { border-color: var(--mauve-primary); background: var(--mauve-light); transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .sec-nav-card i { font-size: 2.5rem; color: var(--mauve-primary); margin-bottom: 1rem; display: inline-block; }
+  .sec-nav-card h4 { color: var(--text-main); font-size: 1.2rem; margin-bottom: 0.3rem; font-weight: 700; }
+  .sec-nav-card p { color: var(--text-muted); font-size: 0.85rem; }
+
+  .site-footer { text-align: center; padding: 2.5rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.95rem; background: var(--card-beige); }
+  @media(max-width: 1024px) { .sidebar { transform: translateX(-300px); } .main-wrapper { margin-left: 0 !important; } .sidebar-toggle-btn { left: 0 !important; } }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-book"><i class="fa-solid fa-graduation-cap"></i></div>
+  <p style="font-weight: 600; font-size: 1.1rem;">Menyiapkan E-Portfolio<span class="dots">...</span></p>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- SIDEBAR TOGGLE BUTTON -->
+<button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" title="Menu">
+  <i class="fa-solid fa-bars" id="toggleIcon"></i>
+</button>
+
+<!-- SIDEBAR NAVIGATION -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="brand-mark"><i class="fa-solid fa-graduation-cap"></i></div>
+    <div class="brand-text">
+      <span class="brand-title">E-Portfolio PPG</span>
+      <span class="brand-sub">Nur Akifa Rifai, S.Sos</span>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <a href="#beranda" class="nav-link active" onclick="switchTab(event, 'beranda')"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+    <a href="#profil" class="nav-link" onclick="switchTab(event, 'profil')"><i class="fa-solid fa-user"></i><span>Profil Pendidik</span></a>
+    <a href="#pengalaman" class="nav-link" onclick="switchTab(event, 'pengalaman')"><i class="fa-solid fa-route"></i><span>Pengalaman Belajar</span></a>
+    <a href="#refleksi" class="nav-link" onclick="switchTab(event, 'refleksi')"><i class="fa-solid fa-book-open"></i><span>Refleksi Pembelajaran</span></a>
+    <a href="#karya" class="nav-link" onclick="switchTab(event, 'karya')"><i class="fa-solid fa-lightbulb"></i><span>Karya Inovasi</span></a>
+    <a href="#artefak" class="nav-link" onclick="switchTab(event, 'artefak')"><i class="fa-solid fa-box-archive"></i><span>Artefak</span></a>
+    <a href="#dokumentasi" class="nav-link" onclick="switchTab(event, 'dokumentasi')"><i class="fa-solid fa-images"></i><span>Dokumentasi</span></a>
+  </div>
+
+  <div class="sidebar-footer">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Mode Gelap/Terang"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+    <div class="header-photo" title="Foto Profil">
+      <img src="poto-profil-ppl.jpg" onerror="this.src='https://placehold.co/100x100/8c5375/ffffff?text=NAR'" alt="Foto Profil" id="headerAvatar">
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN WRAPPER -->
+<div class="main-wrapper" id="mainWrapper">
+  <main class="content">
+
+    <!-- TAB 1: BERANDA -->
+    <section id="beranda" class="tab-section active">
+      <div class="card" style="padding: 4rem 3rem;">
+        <div class="hero-inner">
+          <div class="hero-text-wrap">
+            <div class="hero-icon-badge"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h2 class="hero-title">SEMINAR<br><span>PENDIDIKAN PROFESI GURU</span></h2>
+            <div class="hero-divider"><span class="divider-line"></span><span class="divider-icon"><i class="fa-solid fa-star"></i></span><span class="divider-line"></span></div>
+            <div style="margin-bottom: 1rem;">
+              <h3 style="font-size: 1.6rem; color: var(--mauve-primary); font-weight: 700;">Nur Akifa Rifai, S.Sos.</h3>
+              <p style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-top: 0.3rem;">NIM: 2590554950598</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.5rem;">
+              <span class="hero-info-tag"><i class="fa-solid fa-video"></i> Broadcasting & Perfilman</span>
+              <span class="hero-info-tag"><i class="fa-solid fa-building-columns"></i> Univ. Negeri Makassar</span>
+            </div>
+          </div>
+          <div class="hero-photo">
+            <img src="poto-profil-ppl.jpg" onerror="this.src='https://placehold.co/300x300/8c5375/ffffff?text=Nur+Akifa'" alt="Foto Hero" id="mainHeroPhoto">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: PROFIL -->
+    <section id="profil" class="tab-section">
+      <div class="section-header"><h2>Profil Pendidik</h2><p>Informasi pribadi, riwayat pendidikan, serta identifikasi diri profesional.</p></div>
+      <div class="profile-grid">
+        <div class="profile-sidebar-card">
+          <div style="position: relative; display: inline-block; margin-bottom: 1.5rem;">
+            <img src="poto-profil-ppl.jpg" onerror="this.src='https://placehold.co/200x200/8c5375/ffffff?text=Profil'" alt="Foto Profil" id="profileCardPhoto">
+          </div>
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.3rem;">Nur Akifa Rifai, S.Sos.</h3>
+          <p style="color: var(--mauve-primary); font-size: 0.95rem; margin-bottom: 2rem; font-weight: 600;">PPG Calon Guru 2026</p>
+          <div class="info-group"><label>NIM</label><p>2590554950598</p></div>
+          <div class="info-group"><label>Bidang Studi</label><p>Broadcasting dan Perfilman</p></div>
+          <div class="info-group"><label>Perguruan Tinggi</label><p>Universitas Negeri Makassar</p></div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+            <h3 style="color: var(--text-main); margin-bottom: 1.2rem;"><i class="fa-solid fa-user-pen"></i> Tentang Saya</h3>
+            <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 2rem;">Saya adalah seorang pendidik profesional di bidang Broadcasting dan Perfilman yang berkomitmen mengembangkan kreativitas, literasi media, serta karakter peserta didik.</p>
+            <div class="quote-box">"Pendidikan bukan sekadar mengisi wadah, melainkan menyalakan api inspirasi dan kreativitas masa depan."</div>
+          </div>
+
+          <!-- RIWAYAT PENDIDIKAN -->
+          <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+            <h3 style="color: var(--text-main); margin-bottom: 1.5rem;"><i class="fa-solid fa-graduation-cap"></i> Riwayat Pendidikan</h3>
+            <div class="edu-timeline">
+              <div class="edu-item"><span class="edu-year">Tahun 2026 - Sekarang</span><div class="edu-school">Pendidikan Profesi Guru (Gr.) - Universitas Negeri Makassar</div></div>
+              <div class="edu-item"><span class="edu-year">Tahun 2020 - 2024</span><div class="edu-school">Sarjana Sosial (S.Sos.) - Universitas Islam Ahmad Dahlan</div></div>
+              <div class="edu-item"><span class="edu-year">Tahun 2017 - 2020</span><div class="edu-school">SMA Negeri 7 Sinjai (Jurusan IPS)</div></div>
+              <div class="edu-item"><span class="edu-year">Tahun 2014 - 2017</span><div class="edu-school">SMP Negeri 1 Sinjai Tengah</div></div>
+              <div class="edu-item"><span class="edu-year">Tahun 2008 - 2014</span><div class="edu-school">SD 86 Lappadata</div></div>
+            </div>
+          </div>
+
+          <!-- IDENTIFIKASI DIRI PROFESIONAL (3 SECTION) -->
+          <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+            <h3 style="color: var(--text-main); margin-bottom: 1.2rem;"><i class="fa-solid fa-id-badge"></i> Identifikasi Diri Profesional</h3>
+            <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem;">
+              Sebagai pendidik profesional di bidang Broadcasting dan Perfilman, identifikasi diri saya dirumuskan melalui visi pendidikan, visi guru, serta strategi pencapaian yang berakar pada Profil Pelajar Pancasila dan pemikiran Ki Hadjar Dewantara.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1.2rem;">
+              
+              <!-- Section 1: Visi Pendidikan Indonesia -->
+              <div style="background: var(--card-beige-solid); padding: 1.2rem; border-radius: 10px; border-left: 4px solid var(--mauve-primary);">
+                <strong style="color: var(--mauve-primary); display: block; margin-bottom: 0.4rem; font-size: 1rem;"><i class="fa-solid fa-bullseye"></i> 1. Visi Pendidikan Indonesia</strong>
+                <span style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+                  Mewujudkan pendidikan Indonesia yang berdaulat, mandiri, dan berkepribadian melalui terciptanya Pelajar Pancasila yang bernalar kritis, kreatif, berakhlak mulia, serta siap menjawab tantangan zaman di era industri kreatif digital.
+                </span>
+              </div>
+
+              <!-- Section 2: Visi Menjadi Guru -->
+              <div style="background: var(--card-beige-solid); padding: 1.2rem; border-radius: 10px; border-left: 4px solid var(--mauve-primary);">
+                <strong style="color: var(--mauve-primary); display: block; margin-bottom: 0.4rem; font-size: 1rem;"><i class="fa-solid fa-chalkboard-user"></i> 2. Visi Menjadi Guru</strong>
+                <span style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+                  Menjadi pendidik yang inspiratif, fasilitator yang memerdekakan potensi peserta didik, serta teladan dalam menuntun kodrat anak didik agar tumbuh menjadi kreator media yang beretika, humanis, dan berdampak positif bagi masyarakat.
+                </span>
+              </div>
+
+              <!-- Section 3: Strategi Capaian Visi -->
+              <div style="background: var(--card-beige-solid); padding: 1.2rem; border-radius: 10px; border-left: 4px solid var(--mauve-primary);">
+                <strong style="color: var(--mauve-primary); display: block; margin-bottom: 0.4rem; font-size: 1rem;"><i class="fa-solid fa-route"></i> 3. Strategi Capaian Visi</strong>
+                <span style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+                  Menerapkan pembelajaran berdiferensiasi berbasis proyek (Project-Based Learning) di studio siaran, mengintegrasikan teknologi interaktif 3D, membangun iklim kelas yang aman secara sosial emosional (PSE), serta menjalin kolaborasi erat dengan dunia industri perfilman.
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: PENGALAMAN BELAJAR -->
+    <section id="pengalaman" class="tab-section">
+      <div class="section-header"><h2>Pengalaman Belajar</h2><p>Refleksi Perjalanan Studi selama mengikuti program Pendidikan Profesi Guru (PPG).</p></div>
+      <div class="section-nav-cards" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="sec-nav-card active" id="btnExpSem1" onclick="switchExpSection('sem1')"><i class="fa-solid fa-calendar-days"></i><h4>Refleksi Perjalanan Studi Semester 1</h4><p>Eksplorasi awal, landasan filosofi & pedagogik</p></div>
+        <div class="sec-nav-card" id="btnExpSem2" onclick="switchExpSection('sem2')"><i class="fa-solid fa-calendar-check"></i><h4>Refleksi Perjalanan Studi Semester 2</h4><p>Implementasi PPL Mandiri, edupreneurship & projek</p></div>
+      </div>
+      <div id="expContentSem1">
+        <div class="card" style="padding: 2.5rem; background: var(--card-beige-solid); border-left: 5px solid var(--mauve-primary);">
+          <div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+            <div style="width: 60px; height: 60px; background: var(--mauve-light); color: var(--mauve-primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0;"><i class="fa-solid fa-route"></i></div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <h3 style="color: var(--text-main); font-size: 1.5rem; margin: 0;">Refleksi Perjalanan Studi: Semester 1</h3>
+              <p style="color: var(--text-muted); font-size: 1.02rem; line-height: 1.8;">
+                Semester 1 merupakan tahap awal pembentukan landasan filosofis dan pedagogik sebagai guru profesional. Pada tahap ini, saya mendalami bagaimana memahami karakteristik dan keragaman peserta didik dalam bidang Broadcasting dan Perfilman, menerapkan prinsip <em>growth mindset</em>, merancang pembelajaran mendalam dengan asesmen dasar, serta menginternalisasi pemikiran Ki Hadjar Dewantara melalui kegiatan PPL Terbimbing di Universitas Negeri Makassar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="expContentSem2" style="display: none;">
+        <div class="card" style="padding: 2.5rem; background: var(--card-beige-solid); border-left: 5px solid var(--mauve-primary);">
+          <div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+            <div style="width: 60px; height: 60px; background: var(--mauve-light); color: var(--mauve-primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0;"><i class="fa-solid fa-route"></i></div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <h3 style="color: var(--text-main); font-size: 1.5rem; margin: 0;">Refleksi Perjalanan Studi: Semester 2</h3>
+              <p style="color: var(--text-muted); font-size: 1.02rem; line-height: 1.8;">
+                Semester 2 memperluas cakrawala profesional melalui pendalaman pembelajaran sosial emosional, kewirausahaan pendidikan (edupreneurship), asesmen tingkat lanjut, projek kepemimpinan kolaboratif bersama masyarakat, serta puncak pengaplikasian ilmu melalui PPL Mandiri di sekolah mitra.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: REFLEKSI PEMBELAJARAN (4C SEMUA MATA KULIAH) -->
+    <section id="refleksi" class="tab-section">
+      <div class="section-header"><h2>Refleksi Pembelajaran</h2><p>Analisis Refleksi Mata Kuliah Lengkap dengan Model 4C, Artefak, serta Refleksi LK 3 PPG.</p></div>
+      <div class="section-nav-cards">
+        <div class="sec-nav-card active" id="btnSecSem1" onclick="switchThreeSection('sem1')"><i class="fa-solid fa-calendar-days"></i><h4>Semester 1</h4><p>5 MK & Model 4C</p></div>
+        <div class="sec-nav-card" id="btnSecSem2" onclick="switchThreeSection('sem2')"><i class="fa-solid fa-calendar-check"></i><h4>Semester 2</h4><p>5 MK & Model 4C</p></div>
+        <div class="sec-nav-card" id="btnSecRefleksi" onclick="switchThreeSection('refleksi')"><i class="fa-solid fa-award"></i><h4>Refleksi PPG</h4><p>Refleksi LK 3 & RTL</p></div>
+      </div>
+
+      <!-- SEMESTER 1 -->
+      <div id="contentSem1">
+        <!-- MK 1.1 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-users-viewfinder"></i> 1. Pemahaman Peserta Didik dan Pembelajaran</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Menghubungkan karakteristik dan perkembangan sosial-emosional siswa kejuruan Broadcasting.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Mengakomodasi keragaman gaya belajar siswa saat praktik produksi video.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Asesmen diagnostik kognitif/non-kognitif, Teori Vygotsky, dan Diferensiasi.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Beralih ke pembelajaran yang disesuaikan dengan kebutuhan unik setiap siswa.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">Pemahaman Peserta Didik dan Pembelajaran.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('pemahaman_peserta_didik_dan_pembelajaran.pdf', 'Artefak: Pemahaman Peserta Didik', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+
+        <!-- MK 1.2 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-lightbulb"></i> 2. Design Thinking</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Relevan dengan pra-produksi penyiaran dan perancangan ide cerita film.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Mendorong siswa berpikir terbuka saat riset empati penonton.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Empathize, Define, Ideate, Prototype, Test.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Mengadopsi pola pikir berpusat pada manusia (human-centered).</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">Design Thingking.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('design Thingking.pdf', 'Artefak: Design Thinking', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+
+        <!-- MK 1.3 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-layer-group"></i> 3. Pembelajaran Mendalam dan Asesmen Dasar</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Menyusun modul unjuk kerja praktek tata kamera dan tata cahaya.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Merancang rubrik penilaian autentik yang objektif.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Backward Design & fungsi asesmen formatif-sumatif.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Menetapkan tujuan akhir dan instrumen asesmen di awal.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">Pembelajaran Mendalam dan Asesmen Dasar.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('pemahaman mendalam dan asesmen dasar SMK.pdf', 'Artefak: PMA Dasar', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+
+        <!-- MK 1.4 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-seedling"></i> 4. Growth Mindset</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Membantu siswa SMK mengatasi kesulitan teknis editing video.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Mengikis anggapan bahwa bakat sinematografi adalah bawaan lahir.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Growth Mindset vs Fixed Mindset & umpan balik konstruktif.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Lebih mengapresiasi proses usaha dibandingkan hasil akhir semata.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">Growth Mindset.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('growth mindset.pdf', 'Artefak: Growth Mindset', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+
+        <!-- MK 1.5 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-book-bookmark"></i> 5. Filosofi Pendidikan</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Mengintegrasikan filosofi Ki Hadjar Dewantara di kelas.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Menyeimbangkan teknologi modern dengan etika Profil Pelajar Pancasila.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Sistem Among, Kodrat Alam & Zaman, Tri Ngarsa.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Menjadi fasilitator yang memerdekakan potensi unik peserta didik.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">Filosofi Pendidikan dan Pendidikan Nilai.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('filosofi pendidikan dan pendidikan nilai.pdf', 'Artefak: Filosofi Pendidikan', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEMESTER 2 -->
+      <div id="contentSem2" style="display: none;">
+        <!-- MK 2.1 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-heart"></i> 1. Pembelajaran Sosial Emosional (PSE)</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Manajemen emosi dan kerja tim sangat vital dalam produksi film.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Menciptakan iklim kelas inklusif saat terjadi gesekan kru siswa.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>5 Kompetensi Sosial Emosional (KSE CASEL).</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Rutin menerapkan teknik pernapasan STOP sebelum praktikum.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">Pembelajaran Sosial Emosional.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('pembelajaran sosial emosional.pdf', 'Artefak: PSE', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+
+        <!-- MK 2.2 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-store"></i> 2. Edupreneurship</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Menghubungkan produksi konten audio-visual dengan unit produksi sekolah.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Membimbing siswa agar memiliki jiwa wirausaha media.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Business Model Canvas (BMC) & Manajemen Projek Kreatif.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Mengintegrasikan wawasan kewirausahaan digital ke modul ajar.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">artefak_mk2_2.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('artefak_mk2_2.pdf', 'Artefak: Edupreneurship', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+
+        <!-- MK 2.3 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-chart-line"></i> 3. Pembelajaran Mendalam dan Asesmen Lanjut</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Pengembangan portofolio karya broadcasting & peer-assessment.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Menyusun asesmen HOTS untuk estetika perfilman.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Assessment AS/FOR Learning & umpan balik berkelanjutan.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Memanfaatkan asesmen untuk merevisi strategi mengajar.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">Pembelajaran Mendalam dan Asesmen Lanjut.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('pembelajaran mendalam dan asesmen lanjut smk.pdf', 'Artefak: PMA Lanjut', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+
+        <!-- MK 2.4 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-people-roof"></i> 4. Projek Kepemimpinan</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Merancang projek layanan masyarakat berbasis media digital.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Mengelola komunikasi dengan berbagai pemangku kepentingan.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Asset-Based Community Development (ABCD) & Servant Leadership.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Menjadi penggerak yang memberdayakan potensi aset komunitas.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">Projek Kepemimpinan.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('projek kepemimpinan.pdf', 'Artefak: Projek Kepemimpinan', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+
+        <!-- MK 2.5 -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="color: var(--mauve-primary); margin-bottom: 1.2rem;"><i class="fa-solid fa-chalkboard-user"></i> 5. PPL Mandiri</h3>
+          <div class="c4-grid" style="margin-bottom: 1.5rem;">
+            <div class="c4-item"><strong>Connection (Keterkaitan)</strong><span>Praktik mengajar mandiri di SMK Negeri 2 Makassar.</span></div>
+            <div class="c4-item"><strong>Challenge (Tantangan)</strong><span>Menghadapi situasi kelas dinamis dan kendala teknis studio.</span></div>
+            <div class="c4-item"><strong>Concept (Konsep Utama)</strong><span>Siklus PDCA (Plan, Do, Check, Act) & Pembelajaran Berdiferensiasi.</span></div>
+            <div class="c4-item"><strong>Change (Perubahan Diri)</strong><span>Tumbuh menjadi guru profesional yang adaptif dan mandiri.</span></div>
+          </div>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Artefak:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">artefak_mk2_5.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('artefak_mk2_5.pdf', 'Artefak: PPL Mandiri', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REFLEKSI PPG -->
+      <div id="contentRefleksi" style="display: none;">
+        <div class="card" style="padding: 2.5rem;">
+          <h3 style="font-size: 1.8rem; color: var(--mauve-primary); font-weight: 800; margin-bottom: 1rem;">Refleksi LK 3 & Rencana Tindak Lanjut</h3>
+          <p style="line-height: 1.8; margin-bottom: 1.5rem;">Pendidikan di Indonesia seharusnya menuntun dan memerdekakan peserta didik sesuai kodrat alam dan zamannya.</p>
+          <div style="background: var(--card-beige-solid); padding: 1.25rem; border-radius: 12px; border: 1px dashed var(--mauve-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div><strong style="font-size: 0.95rem;">Dokumen LK 3:</strong><span style="font-size: 0.85rem; color: var(--mauve-primary); font-weight: 600; margin-left: 0.5rem;">lembar_kerja_3.pdf</span></div>
+            <div><button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="openCustomPreview('lembar_kerja_3.pdf', 'Lembar Kerja 3', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat File</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: KARYA INOVASI -->
+    <section id="karya" class="tab-section">
+      <div class="section-header"><h2>Karya Inovasi</h2><p>Kumpulan karya inovatif berupa media interaktif dan perangkat pembelajaran.</p></div>
+      <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2.5rem;">
+        <div style="background: var(--mauve-gradient); padding: 2.5rem; color: #fff;">
+          <span class="hero-info-tag" style="background: rgba(255,255,255,0.2); color: #fff; margin-bottom: 1rem;">Identitas Karya Inovasi</span>
+          <h3 style="font-size: 2rem; margin-bottom: 1rem;">Studio Manajemen Siaran</h3>
+          <p style="color: rgba(255,255,255,0.9);">Media Pembelajaran Interaktif Berbasis Web & 3D.</p>
+        </div>
+        <div style="padding: 2.5rem; background: var(--card-beige);">
+          <div class="grid-3">
+            <div class="icon-card" style="text-align: center;">
+              <i class="fa-solid fa-desktop fa-3x" style="color: var(--mauve-primary); margin-bottom: 1rem;"></i>
+              <h5 style="margin-bottom: 0.5rem;">Tampilan Web Inovasi</h5>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">File: <code>studio_manajemen_siaran.html</code></p>
+              <button class="btn" style="width: 100%; justify-content: center;" onclick="openUploadedWebDirectly('studio_manajemen_siaran_tv.html', 'Studio Manajemen Siaran')"><i class="fa-solid fa-play"></i> Buka Full Layar</button>
+            </div>
+            <div class="icon-card" style="text-align: center;">
+              <i class="fa-solid fa-book-open fa-3x" style="color: var(--mauve-primary); margin-bottom: 1rem;"></i>
+              <h5 style="margin-bottom: 0.5rem;">Modul Ajar</h5>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">File: <code>modul_ajar.pdf</code></p>
+              <button class="btn btn-outline" style="width: 100%; justify-content: center;" onclick="openCustomPreview('modul_ajar.pdf', 'Modul Ajar: Studio Manajemen Siaran', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat Modul</button>
+            </div>
+            <div class="icon-card" style="text-align: center;">
+              <i class="fa-solid fa-file-pdf fa-3x" style="color: var(--mauve-primary); margin-bottom: 1rem;"></i>
+              <h5 style="margin-bottom: 0.5rem;">Bahan Ajar</h5>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">File: <code>bahan_ajar.pdf</code></p>
+              <button class="btn btn-outline" style="width: 100%; justify-content: center;" onclick="openCustomPreview('bahan_ajar.pdf', 'Bahan Ajar: Studio Manajemen Siaran', 'application/pdf')"><i class="fa-solid fa-eye"></i> Lihat Bahan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: ARTEFAK -->
+    <section id="artefak" class="tab-section">
+      <div class="section-header"><h2>Artefak Pembelajaran</h2><p>Kumpulan dokumen, RPP, dan lembar kerja peserta didik.</p></div>
+      <div class="card">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+          <div style="padding: 1.2rem; background: var(--card-beige-solid); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.8rem;">
+            <span style="font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><i class="fa-solid fa-file-pdf" style="color:var(--mauve-primary);"></i> Dokumen_Modul_Ajar_PPG.pdf</span>
+            <button class="btn btn-outline" style="width: 100%; justify-content: center; padding: 0.4rem; font-size: 0.85rem;" onclick="openCustomPreview('Dokumen_Modul_Ajar_PPG.pdf', 'Modul Ajar PPG', 'application/pdf')"><i class="fa-solid fa-eye"></i> Pratinjau</button>
+          </div>
+          <div style="padding: 1.2rem; background: var(--card-beige-solid); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.8rem;">
+            <span style="font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><i class="fa-solid fa-file-pdf" style="color:var(--mauve-primary);"></i> LKPD_Sinematografi.pdf</span>
+            <button class="btn btn-outline" style="width: 100%; justify-content: center; padding: 0.4rem; font-size: 0.85rem;" onclick="openCustomPreview('LKPD_Sinematografi.pdf', 'LKPD Sinematografi', 'application/pdf')"><i class="fa-solid fa-eye"></i> Pratinjau</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 7: DOKUMENTASI -->
+    <section id="dokumentasi" class="tab-section">
+      <div class="section-header"><h2>Dokumentasi Kegiatan</h2><p>Galeri foto kegiatan 3S dan siklus PPL.</p></div>
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.3rem;">Dokumentasi Foto 3S</h3>
+        </div>
+        <div class="grid-3" id="grid3s">
+          <div style="background: var(--card-beige-solid); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); aspect-ratio: 4/3; cursor: pointer;">
+            <img src="foto_3s_1.jpg" onerror="this.src='https://placehold.co/400x300/8c5375/ffffff?text=Dokumentasi+3S+1'" style="width: 100%; height: 100%; object-fit: cover;" onclick="openCustomPreview('foto_3s_1.jpg', 'Dokumentasi 3S 1', 'image/*')">
+          </div>
+          <div style="background: var(--card-beige-solid); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); aspect-ratio: 4/3; cursor: pointer;">
+            <img src="foto_3s_2.jpg" onerror="this.src='https://placehold.co/400x300/8c5375/ffffff?text=Dokumentasi+3S+2'" style="width: 100%; height: 100%; object-fit: cover;" onclick="openCustomPreview('foto_3s_2.jpg', 'Dokumentasi 3S 2', 'image/*')">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="site-footer">
+    <p style="font-weight: 600; color: var(--mauve-primary); margin-bottom: 0.5rem;">&copy; 2026 E-Portofolio Seminar PPG</p>
+    <p>Nur Akifa Rifai, S.Sos. &bull; Universitas Negeri Makassar</p>
+  </footer>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal-container" style="height: 90vh; max-width: 1000px;">
+    <div class="modal-header">
+      <h4 id="previewModalTitle">Pratinjau Dokumen</h4>
+      <div style="display: flex; gap: 0.8rem; align-items: center;">
+        <button class="btn btn-outline" style="padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="toggleModalFullscreen()">
+          <i class="fa-solid fa-expand" id="fullscreenIcon"></i> <span id="fullscreenText">Layar Penuh</span>
+        </button>
+        <button class="modal-close" onclick="closePreviewModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="previewModalBody"></div>
+  </div>
+</div>
+
+<!-- SCRIPT NAVIGASI & MODAL PREVIEW -->
+<script>
+  window.addEventListener('load', () => {
+    const loader = document.getElementById('loader');
+    if (loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
+  });
+
+  window.addEventListener('scroll', () => {
+    const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    const progressBar = document.getElementById('scrollProgress');
+    if (progressBar) progressBar.style.width = scrolled + '%';
+  });
+
+  function toggleSidebarCollapse() {
+    document.body.classList.toggle('sidebar-visible');
+    document.getElementById('sidebar').classList.toggle('visible');
+  }
+
+  function switchTab(event, tabId) {
+    if(event) event.preventDefault();
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    if(event && event.currentTarget) event.currentTarget.classList.add('active');
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if(window.innerWidth <= 1024) toggleSidebarCollapse();
+  }
+
+  function switchThreeSection(key) {
+    document.querySelectorAll('.sec-nav-card').forEach(c => c.classList.remove('active'));
+    document.getElementById('contentSem1').style.display = 'none';
+    document.getElementById('contentSem2').style.display = 'none';
+    document.getElementById('contentRefleksi').style.display = 'none';
+    if(key === 'sem1') { document.getElementById('btnSecSem1').classList.add('active'); document.getElementById('contentSem1').style.display = 'block'; }
+    if(key === 'sem2') { document.getElementById('btnSecSem2').classList.add('active'); document.getElementById('contentSem2').style.display = 'block'; }
+    if(key === 'refleksi') { document.getElementById('btnSecRefleksi').classList.add('active'); document.getElementById('contentRefleksi').style.display = 'block'; }
+  }
+
+  function switchExpSection(key) {
+    document.getElementById('btnExpSem1').classList.remove('active');
+    document.getElementById('btnExpSem2').classList.remove('active');
+    document.getElementById('expContentSem1').style.display = 'none';
+    document.getElementById('expContentSem2').style.display = 'none';
+    if(key === 'sem1') { document.getElementById('btnExpSem1').classList.add('active'); document.getElementById('expContentSem1').style.display = 'block'; }
+    if(key === 'sem2') { document.getElementById('btnExpSem2').classList.add('active'); document.getElementById('expContentSem2').style.display = 'block'; }
+  }
+
+  function toggleTheme() {
+    const body = document.body;
+    const themeIcon = document.getElementById('themeIcon');
+    if (body.getAttribute('data-theme') === 'dark') {
+      body.removeAttribute('data-theme');
+      themeIcon.className = 'fa-solid fa-moon';
+    } else {
+      body.setAttribute('data-theme', 'dark');
+      themeIcon.className = 'fa-solid fa-sun';
+    }
+  }
+
+  // Fungsi khusus untuk membuka Web Karya Inovasi secara penuh tanpa mengunduh
+  function openUploadedWebDirectly(fileUrl, titleText) {
+    const modal = document.getElementById('previewModal');
+    const title = document.getElementById('previewModalTitle');
+    const body = document.getElementById('previewModalBody');
+    if(title) title.innerHTML = `<i class="fa-solid fa-desktop" style="color:var(--mauve-primary);"></i> &nbsp; ${titleText || 'Pratinjau Web Inovasi'}`;
+    
+    if(body) {
+      body.innerHTML = `
+        <div style="display:flex; flex-direction:column; width:100%; height:100%;">
+          <div style="background:var(--card-beige-solid); padding:0.6rem 1.5rem; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.85rem; color:var(--text-muted);"><i class="fa-solid fa-circle-check" style="color:var(--mauve-primary);"></i> Tampilan Interaktif Web Karya Inovasi</span>
+            <a href="${fileUrl}" target="_blank" class="btn" style="padding:0.3rem 0.8rem; font-size:0.8rem;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Buka di Tab Baru</a>
+          </div>
+          <iframe src="${fileUrl}" style="width: 100%; flex: 1; border: none; background: #fff;" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+        </div>
+      `;
+    }
+    if(modal) {
+      modal.classList.add('active');
+      const container = modal.querySelector('.modal-container');
+      container.classList.add('fullscreen');
+      updateFullscreenButtonState(true);
+    }
+  }
+
+  // Fungsi pratinjau dokumen & gambar dengan pembaca Object PDF multi-engine
+  function openCustomPreview(url, name, type) {
+    const modal = document.getElementById('previewModal');
+    const title = document.getElementById('previewModalTitle');
+    const body = document.getElementById('previewModalBody');
+    if(title) title.innerHTML = `<i class="fa-solid fa-file-lines" style="color:var(--mauve-primary);"></i> &nbsp; ${name}`;
+    
+    if (type && type.includes('image')) {
+      body.innerHTML = `
+        <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 1.5rem;">
+          <img src="${url}" onerror="this.onerror=null; this.src='https://placehold.co/800x600/8c5375/ffffff?text=Dokumentasi+${encodeURIComponent(name)}';" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; box-shadow: var(--shadow-md);">
+        </div>`;
+    } else {
+      // Menggunakan Tag <object> yang didukung semua browser lokal untuk pratinjau PDF langsung
+      body.innerHTML = `
+        <div style="width:100%; height:100%; display:flex; flex-direction:column;">
+          <object data="${url}" type="application/pdf" style="width:100%; height:100%; border:none;">
+            <iframe src="${url}" style="width:100%; height:100%; border:none;">
+              <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; padding:2rem;">
+                <i class="fa-solid fa-file-pdf fa-4x" style="color:var(--mauve-primary); margin-bottom:1rem;"></i>
+                <h4 style="font-size:1.3rem; margin-bottom:0.5rem; color:var(--text-main);">${name}</h4>
+                <p style="color:var(--text-muted); max-width:500px; margin-bottom:1.5rem; font-size:0.95rem;">
+                  Klik tombol di bawah ini untuk membuka dokumen PDF <code>${url}</code> secara penuh.
+                </p>
+                <a href="${url}" target="_blank" class="btn"><i class="fa-solid fa-up-right-from-square"></i> Buka Dokumen Langsung</a>
+              </div>
+            </iframe>
+          </object>
+        </div>
+      `;
+    }
+    modal.classList.add('active');
+    const container = modal.querySelector('.modal-container');
+    container.classList.remove('fullscreen');
+    updateFullscreenButtonState(false);
+  }
+
+  function toggleModalFullscreen() {
+    const container = document.querySelector('#previewModal .modal-container');
+    if(container) {
+      const isFullscreen = container.classList.toggle('fullscreen');
+      updateFullscreenButtonState(isFullscreen);
+    }
+  }
+
+  function updateFullscreenButtonState(isFullscreen) {
+    const icon = document.getElementById('fullscreenIcon');
+    const text = document.getElementById('fullscreenText');
+    if(icon && text) {
+      if(isFullscreen) {
+        icon.className = 'fa-solid fa-compress';
+        text.textContent = 'Layar Kecil';
+      } else {
+        icon.className = 'fa-solid fa-expand';
+        text.textContent = 'Layar Penuh';
+      }
+    }
+  }
+
+  function closePreviewModal() {
+    const modal = document.getElementById('previewModal');
+    if(modal) {
+      modal.classList.remove('active');
+      const container = modal.querySelector('.modal-container');
+      if(container) container.classList.remove('fullscreen');
+      setTimeout(() => { document.getElementById('previewModalBody').innerHTML = ''; }, 300);
+    }
+  }
+</script>
+</body>
+</html>
